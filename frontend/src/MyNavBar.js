@@ -1,13 +1,25 @@
-import {Container, Nav, Navbar, NavDropdown} from "react-bootstrap";
-import React, {Component} from "react";
+import React from 'react';
+import {
+    Collapse,
+    Navbar,
+    NavbarToggler,
+    NavbarBrand,
+    Nav,
+    NavItem,
+    NavLink,
+    UncontrolledDropdown,
+    DropdownToggle,
+    DropdownMenu,
+    DropdownItem } from 'reactstrap';
 
-class MyNavBar extends Component {
+export default class Example extends React.Component {
     constructor(props) {
         super(props);
 
-        this.state = {isOpen: false}
         this.toggle = this.toggle.bind(this);
-
+        this.state = {
+            isOpen: false
+        };
     }
     toggle() {
         this.setState({
@@ -15,32 +27,38 @@ class MyNavBar extends Component {
         });
     }
     render() {
-        // return <Navbar color={"dark"} dark expand={"md"}>
-        //     <NavbarBrand tag={Link} to={"/"}>Home</NavbarBrand>
-        // </Navbar>;
-
         return (
-            <Navbar bg="light" expand="lg" sticky="top">
-                {/*<Container>*/}
-                    <Navbar.Brand href="#home">ONI-lab</Navbar.Brand>
-                    <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                    <Navbar.Collapse id="basic-navbar-nav">
-                        <Nav className="me-auto">
-                            <Nav.Link href="#home">Home</Nav.Link>
-                            <Nav.Link href="#link">Link</Nav.Link>
-                            <NavDropdown title="Dropdown" id="basic-nav-dropdown">
-                                <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
-                                <NavDropdown.Item href="#action/3.2">Another action</NavDropdown.Item>
-                                <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
-                                <NavDropdown.Divider />
-                                <NavDropdown.Item href="#action/3.4">Separated link</NavDropdown.Item>
-                            </NavDropdown>
+            <div>
+                <Navbar color="light" light expand="md">
+                    <NavbarBrand href="/">ONI Lab</NavbarBrand>
+                    <NavbarToggler onClick={this.toggle} />
+                    <Collapse isOpen={this.state.isOpen} navbar>
+                        <Nav className="ml-auto" navbar>
+
+                            <NavItem>
+                                <NavLink href="/">Item</NavLink>
+                            </NavItem>
+                            <UncontrolledDropdown nav inNavbar>
+                                <DropdownToggle nav caret>
+                                    Options
+                                </DropdownToggle>
+                                <DropdownMenu right>
+                                    <DropdownItem>
+                                        Option 1
+                                    </DropdownItem>
+                                    <DropdownItem>
+                                        Option 2
+                                    </DropdownItem>
+                                    <DropdownItem divider />
+                                    <DropdownItem>
+                                        Reset
+                                    </DropdownItem>
+                                </DropdownMenu>
+                            </UncontrolledDropdown>
                         </Nav>
-                    </Navbar.Collapse>
-                {/*</Container>*/}
-            </Navbar>
+                    </Collapse>
+                </Navbar>
+            </div>
         );
     }
 }
-
-export default MyNavBar;

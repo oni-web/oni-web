@@ -1,7 +1,6 @@
 import React, {Component} from "react";
-import {Button, ButtonGroup} from "reactstrap";
+import {Button, ButtonGroup, Col, Container, Row} from "reactstrap";
 import {Link} from "react-router-dom";
-import {Container, Row} from "react-bootstrap";
 
 class ControlButton extends Component {
     constructor(props) {
@@ -58,14 +57,23 @@ class ControlButton extends Component {
     }
     render() {
         return(
-            <Row md={2}>
-                <ButtonGroup>
-                    <Button size="sm" color="primary" onClick={()=>this.handleStart()}>Start</Button>
-                    <Button size="sm" color="primary" onClick={()=>this.handlePause()}>Pause</Button>
-                    <Button size="sm" color="primary" onClick={()=>this.handleTerminate()}>Terminate</Button>
-                    <Button size="sm" color="primary" onClick={()=>this.handleCheckResult()}>Check Result</Button>
-                </ButtonGroup>
-            </Row>
+            <Container>
+                <Row>
+                    <Col md={"auto"}>
+                        <ButtonGroup >
+                            <Button size="sm" color="primary" onClick={()=>this.handleStart()}>Start</Button>
+                            <Button size="sm" color="primary" onClick={()=>this.handlePause()}>Pause</Button>
+                            <Button size="sm" color="primary" onClick={()=>this.handleTerminate()}>Terminate</Button>
+                            <Button className={"text-nowrap"} size="sm" color="primary" onClick={()=>this.handleCheckResult()}>Check Result</Button>
+                        </ButtonGroup>
+                    </Col>
+                    <Col md={"auto"}>
+                        <Button size="sm" className={"text-nowrap"} color={"primary"} tag={Link} to={"/detail"}>View details</Button>
+                    </Col>
+                </Row>
+
+
+            </Container>
 
         );
     }
