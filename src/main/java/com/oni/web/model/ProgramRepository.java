@@ -1,4 +1,4 @@
-package com.jt.demo.model;
+package com.oni.web.model;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

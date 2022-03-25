@@ -1,7 +1,7 @@
-package com.jt.demo.controller;
+package com.oni.web.controller;
 
-import com.jt.demo.model.Client;
-import com.jt.demo.model.ClientRepository;
+import com.oni.web.model.Client;
+import com.oni.web.model.ClientRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

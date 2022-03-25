@@ -1,4 +1,4 @@
-package com.jt.demo;
+package com.oni.web;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

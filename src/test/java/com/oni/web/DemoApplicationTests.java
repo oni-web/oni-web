@@ -1,4 +1,4 @@
-package com.jt.demo;
+package com.oni.web;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
