@@ -49,9 +49,11 @@ public class ProgramController {
     }
 
     @GetMapping("/terminate/{programName}")
-    public void terminateProgram(@PathVariable String programName) {
+    public ResponseEntity<Object> terminateProgram(@PathVariable String programName) {
         // command   ctrl+ C
         logger.info("terminate matlab program: " + programName);
+        MatlabEngineManager.terminateProgram(outputPath, programName);
+        return ResponseEntity.ok().build();
 
 //        return clientRepository.findById(id).orElseThrow(RuntimeException::new);
     }
@@ -76,7 +78,7 @@ public class ProgramController {
     }
 
     @GetMapping("/")
-    public ResponseEntity getProgramList() {
+    public ResponseEntity<Object> getProgramList() {
         ArrayList<Program> programList = new ArrayList<Program>();
         try {
             Files.list(new File(programPath).toPath())

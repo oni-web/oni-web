@@ -53,6 +53,20 @@ public class MatlabEngineManager {
 
     private static Logger logger = LoggerFactory.getLogger(MatlabEngineManager.class);
 
+    private static MatlabEngine getEngine(String programName) {
+        MatlabEngine engine = null;
+        if (engineMap.containsKey(programName)) {
+            engine = engineMap.get(programName);
+        } else {
+            try {
+                engine = MatlabEngine.startMatlab();
+                engineMap.put(programName, engine);
+            } catch (EngineException | InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        return engine;
+    }
 
     public static void runProgram(String programPath, String outputPath, String programName) {
         if (threadMap.containsKey(programName) && !threadMap.get(programName).isAlive()) {
@@ -69,17 +83,7 @@ public class MatlabEngineManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        MatlabEngine engine = null;
-        if (engineMap.containsKey(programName)) {
-            engine = engineMap.get(programName);
-        } else {
-            try {
-                engine = MatlabEngine.startMatlab();
-                engineMap.put(programName, engine);
-            } catch (EngineException | InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+        MatlabEngine engine = getEngine(programName);
         if (engine == null) {
             logger.error("Engine instance is null!");
             return;
@@ -97,9 +101,18 @@ public class MatlabEngineManager {
 
     }
 
-//    public MatlabEngine deleteEngine(String programName){
-//
-//    }
+    public static void terminateProgram(String outputPath, String programName) {
+        // Delete output file.
+        var path = Path.of(outputPath + programName);
+        try {
+            Files.deleteIfExists(path);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
+        //todo delete progress file.
+        threadMap.get(programName).stop();
+        threadMap.remove(programName);
+    }
 
 }
