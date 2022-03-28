@@ -1,4 +1,4 @@
-import {Col, Row, Progress } from "reactstrap";
+import {Col, Row, Progress, Container} from "reactstrap";
 import ProgramInfo from "./ProgramInfo";
 import ControlButton from "./ControlButton";
 import React from "react";
@@ -7,7 +7,7 @@ import React from "react";
 const ProgramList = ({programs}) => {
     const now = 80;
     return (
-        <Col md={6}>
+        <div>
             {
                 programs.map(program => (
                     <Row>
@@ -19,7 +19,7 @@ const ProgramList = ({programs}) => {
                     </Row>
                 ))
             }
-        </Col>
+        </div>
 
 
     );

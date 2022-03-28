@@ -5,26 +5,29 @@ import {Link} from "react-router-dom";
 class ControlButton extends Component {
     constructor(props) {
         super(props);
+        this.state = {disabled: false};
 
     }
 
     async handleStart() {
+        this.setState({disabled: true});
         const program = this.props.program;
-        await fetch('/program/start/'+program, {
+        await fetch('/program/start/' + program, {
             method: 'GET',
-            headers:{
+            headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
 
         });
+        this.setState({disabled: false});
     }
 
     async handlePause() {
         const program = this.props.program;
-        await fetch('/program/pause/'+program, {
+        await fetch('/program/pause/' + program, {
             method: 'GET',
-            headers:{
+            headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
@@ -34,9 +37,9 @@ class ControlButton extends Component {
 
     async handleTerminate() {
         const program = this.props.program;
-        await fetch('/program/terminate/'+program, {
+        await fetch('/program/terminate/' + program, {
             method: 'GET',
-            headers:{
+            headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
@@ -46,29 +49,36 @@ class ControlButton extends Component {
 
     async handleCheckResult() {
         const program = this.props.program;
-        await fetch('/program/checkResult/'+program, {
+        await fetch('/program/checkResult/' + program, {
             method: 'GET',
-            headers:{
+            headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
 
+        }).then(data => {
+            console.log(data);
         });
     }
+
     render() {
-        return(
+        return (
             <Container>
                 <Row>
                     <Col md={"auto"}>
-                        <ButtonGroup >
-                            <Button size="sm" color="primary" onClick={()=>this.handleStart()}>Start</Button>
-                            <Button size="sm" color="primary" onClick={()=>this.handlePause()}>Pause</Button>
-                            <Button size="sm" color="primary" onClick={()=>this.handleTerminate()}>Terminate</Button>
-                            <Button className={"text-nowrap"} size="sm" color="primary" onClick={()=>this.handleCheckResult()}>Check Result</Button>
+                        <ButtonGroup>
+                            <Button disabled={this.state.disabled} size="sm" color="primary" onClick={() => this.handleStart()}>Start</Button>
+                            <Button disabled={this.state.disabled} size="sm" color="primary"
+                                    onClick={() => this.handlePause()}>Pause</Button>
+                            <Button disabled={this.state.disabled} size="sm" color="primary"
+                                    onClick={() => this.handleTerminate()}>Terminate</Button>
+                            <Button disabled={this.state.disabled} className={"text-nowrap"} size="sm" color="primary"
+                                    onClick={() => this.handleCheckResult()}>Check Result</Button>
                         </ButtonGroup>
                     </Col>
                     <Col md={"auto"}>
-                        <Button size="sm" className={"text-nowrap"} color={"primary"} tag={Link} to={"/detail"}>View details</Button>
+                        <Button size="sm" className={"text-nowrap"} color={"primary"} tag={Link} to={"/detail"}>View
+                            details</Button>
                     </Col>
                 </Row>
 
