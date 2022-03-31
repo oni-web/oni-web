@@ -35,9 +35,9 @@ class ProgramRunner implements Runnable {
         try {
 
             var path = Path.of(outputPath + programName);
+            Files.createFile(path);
+            // Output file will be written by matlab program.
             double res = engine.feval(programName);
-            Path file = Files.createFile(path);
-            Files.writeString(file, String.valueOf(res), StandardCharsets.UTF_8);
         } catch (InterruptedException | ExecutionException | IOException e) {
             e.printStackTrace();
         }
