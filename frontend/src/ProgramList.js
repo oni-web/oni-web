@@ -12,7 +12,6 @@ const ProgramList = ({programs}) => {
                 programs.map(program => (
                     <Row>
                         <ProgramInfo title={program.name}/>
-
                         <Progress animated value={now}>{now}%</Progress>
                         <p/>
                         <ControlButton program={program.name}/>

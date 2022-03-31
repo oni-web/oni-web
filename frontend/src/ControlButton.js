@@ -1,17 +1,17 @@
-import React, {Component} from "react";
-import {Button, ButtonGroup, Col, Container, Row} from "reactstrap";
+import React, {Component, useState} from "react";
+import {Button, ButtonGroup, Col, Container, Modal, ModalBody, ModalFooter, ModalHeader, Row} from "reactstrap";
 import {Link} from "react-router-dom";
+import PopupModal from "./PopupModal";
 
-class ControlButton extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {disabled: false};
 
-    }
+const ControlButton = ({program}) => {
 
-    async handleStart() {
-        this.setState({disabled: true});
-        const program = this.props.program;
+    const [disabled, setDisabled] = useState(false);
+    const [showModal, setShowModal] = useState(false);
+    const [data, setData] = useState(null);
+
+    async function handleStart() {
+        setDisabled(true);
         await fetch('/program/start/' + program, {
             method: 'GET',
             headers: {
@@ -20,11 +20,10 @@ class ControlButton extends Component {
             },
 
         });
-        this.setState({disabled: false});
+        setDisabled(false);
     }
 
-    async handlePause() {
-        const program = this.props.program;
+    async function handlePause() {
         await fetch('/program/pause/' + program, {
             method: 'GET',
             headers: {
@@ -35,8 +34,7 @@ class ControlButton extends Component {
         });
     }
 
-    async handleTerminate() {
-        const program = this.props.program;
+    async function handleTerminate() {
         await fetch('/program/terminate/' + program, {
             method: 'GET',
             headers: {
@@ -47,8 +45,7 @@ class ControlButton extends Component {
         });
     }
 
-    async handleCheckResult() {
-        const program = this.props.program;
+    async function handleCheckResult() {
         await fetch('/program/checkResult/' + program, {
             method: 'GET',
             headers: {
@@ -56,37 +53,40 @@ class ControlButton extends Component {
                 'Content-Type': 'application/json'
             },
 
+        }).then(res => {
+            return res.json();
         }).then(data => {
-            console.log(data);
-        });
+            setShowModal(true);
+            setData(data);
+        })
     }
 
-    render() {
-        return (
-            <Container>
-                <Row>
-                    <Col md={"auto"}>
-                        <ButtonGroup>
-                            <Button disabled={this.state.disabled} size="sm" color="primary" onClick={() => this.handleStart()}>Start</Button>
-                            <Button disabled={this.state.disabled} size="sm" color="primary"
-                                    onClick={() => this.handlePause()}>Pause</Button>
-                            <Button disabled={this.state.disabled} size="sm" color="primary"
-                                    onClick={() => this.handleTerminate()}>Terminate</Button>
-                            <Button disabled={this.state.disabled} className={"text-nowrap"} size="sm" color="primary"
-                                    onClick={() => this.handleCheckResult()}>Check Result</Button>
-                        </ButtonGroup>
-                    </Col>
-                    <Col md={"auto"}>
-                        <Button size="sm" className={"text-nowrap"} color={"primary"} tag={Link} to={"/detail"}>View
-                            details</Button>
-                    </Col>
-                </Row>
 
+    return (
+        <Container>
+            <Row>
+                <Col md={"auto"}>
+                    <ButtonGroup>
+                        <Button disabled={disabled} size="sm" color="primary"
+                                onClick={() => handleStart()}>Start</Button>
+                        <Button disabled={disabled} size="sm" color="primary"
+                                onClick={() => handlePause()}>Pause</Button>
+                        <Button disabled={disabled} size="sm" color="primary"
+                                onClick={() => handleTerminate()}>Terminate</Button>
+                        <Button disabled={disabled} className={"text-nowrap"} size="sm" color="primary"
+                                onClick={() => handleCheckResult()}>Check Result</Button>
+                    </ButtonGroup>
+                </Col>
+                <Col md={"auto"}>
+                    <Button size="sm" className={"text-nowrap"} color={"primary"} tag={Link} to={"/detail"}>View
+                        details</Button>
+                </Col>
+            </Row>
+            <PopupModal open={showModal} setOpen={setShowModal} body={data}/>
+        </Container>
 
-            </Container>
+    );
 
-        );
-    }
 }
 
 export default ControlButton;
