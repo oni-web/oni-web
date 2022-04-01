@@ -4,7 +4,7 @@ import {Link} from "react-router-dom";
 import PopupModal from "./PopupModal";
 
 
-const ControlButton = ({program}) => {
+const ControlButton = ({programName, setRunning}) => {
 
     const [disabled, setDisabled] = useState(false);
     const [showModal, setShowModal] = useState(false);
@@ -12,7 +12,7 @@ const ControlButton = ({program}) => {
 
     async function handleStart() {
         setDisabled(true);
-        await fetch('/program/start/' + program, {
+        await fetch('/program/start/' + programName, {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
@@ -21,10 +21,11 @@ const ControlButton = ({program}) => {
 
         });
         setDisabled(false);
+        setRunning(true);
     }
 
     async function handlePause() {
-        await fetch('/program/pause/' + program, {
+        await fetch('/program/pause/' + programName, {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
@@ -35,7 +36,7 @@ const ControlButton = ({program}) => {
     }
 
     async function handleTerminate() {
-        await fetch('/program/terminate/' + program, {
+        await fetch('/program/terminate/' + programName, {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
@@ -43,10 +44,11 @@ const ControlButton = ({program}) => {
             },
 
         });
+        setRunning(false);
     }
 
     async function handleCheckResult() {
-        await fetch('/program/checkResult/' + program, {
+        await fetch('/program/checkResult/' + programName, {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
@@ -58,7 +60,7 @@ const ControlButton = ({program}) => {
         }).then(data => {
             setShowModal(true);
             setData(data);
-        })
+        });
     }
 
 

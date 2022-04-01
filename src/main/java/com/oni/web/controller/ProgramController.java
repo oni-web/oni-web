@@ -2,7 +2,6 @@ package com.oni.web.controller;
 
 import com.oni.web.model.MatlabEngineManager;
 import com.oni.web.model.Program;
-import com.mathworks.engine.MatlabEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,7 +18,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 
 
 @RestController
@@ -33,10 +31,11 @@ public class ProgramController {
     String outputPath;
 
     Logger logger = LoggerFactory.getLogger(ProgramController.class);
+
     @GetMapping("/start/{programName}")
     public ResponseEntity<String> startProgram(@PathVariable String programName) {
         MatlabEngineManager.runProgram(programPath, outputPath, programName);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok("Started successfully.");
 //        return clientRepository.findById(id).orElseThrow(RuntimeException::new);
     }
 
@@ -50,21 +49,23 @@ public class ProgramController {
 
     @GetMapping("/terminate/{programName}")
     public ResponseEntity<Object> terminateProgram(@PathVariable String programName) {
-        // command   ctrl+ C
         logger.info("terminate matlab program: " + programName);
         MatlabEngineManager.terminateProgram(outputPath, programName);
         return ResponseEntity.ok().build();
-
-//        return clientRepository.findById(id).orElseThrow(RuntimeException::new);
     }
 
-    //    Check the output of the program and return it, return null if not finished.
+
+    /**
+     * Check the output of the program and return it.
+     * The result file <outputPath> is written by the matlab program.
+     * So this function returns whatever the output file has.
+     */
     @GetMapping("/checkResult/{programName}")
     public ResponseEntity<Object> checkProgram(@PathVariable String programName) {
 
         Path path = Path.of(outputPath + programName);
         logger.info("checkResult matlab program: " + programName);
-        if(!Files.exists(path)){
+        if (!Files.exists(path)) {
             logger.warn("output file doesn't exist. Check later.");
             return ResponseEntity.ok("Still running, check later");
         }
@@ -77,6 +78,45 @@ public class ProgramController {
         return ResponseEntity.ok(result);
     }
 
+    @GetMapping("/getProgress/{programName}")
+    public ResponseEntity<Object> getProgress(@PathVariable String programName) {
+        class Progress{
+            final String status;
+            final Double fraction;
+
+            public Progress(String status, Double fraction) {
+                this.status = status;
+                this.fraction = fraction;
+            }
+
+            public String getStatus() {
+                return status;
+            }
+
+            public Double getFraction() {
+                return fraction;
+            }
+        }
+        Path path = Path.of(progressPath + programName);
+        logger.info("get progress of matlab program: " + programName);
+        if (!Files.exists(path)) {
+            logger.error("progress file doesn't exist!");
+            return ResponseEntity.ok(new Progress("stopped",0.0));
+        }
+        Double fraction = null;
+        try {
+            fraction = Double.valueOf(Files.readString(path, StandardCharsets.UTF_8));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (fraction==1)  return ResponseEntity.ok(new Progress("stopped",fraction));
+        return ResponseEntity.ok(new Progress("running",fraction));
+    }
+
+    /**
+     * This function returns all the filenames under programPath.
+     * It doesn't check whether there are invalid files under the directory. Be aware of that!
+     */
     @GetMapping("/")
     public ResponseEntity<Object> getProgramList() {
         ArrayList<Program> programList = new ArrayList<Program>();
@@ -87,6 +127,12 @@ public class ProgramController {
                         String name = fileName.substring(0, fileName.lastIndexOf("."));
                         Program program = new Program();
                         program.setName(name);
+                        var threadMap = MatlabEngineManager.getThreadMap();
+                        if (threadMap.containsKey(name)) {
+                            program.setStatus("running");
+                        } else {
+                            program.setStatus("stopped");
+                        }
                         programList.add(program);
                     });
         } catch (IOException e) {

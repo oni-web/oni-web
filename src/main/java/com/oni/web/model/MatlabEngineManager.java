@@ -16,11 +16,11 @@ import java.util.concurrent.Future;
 
 
 class ProgramRunner implements Runnable {
-    private MatlabEngine engine;
-    private String programPath;
-    private String programName;
-    private String outputPath;
-    private Logger logger = LoggerFactory.getLogger(Runnable.class);
+    private final MatlabEngine engine;
+    private final String programPath;
+    private final String programName;
+    private final String outputPath;
+    private final Logger logger = LoggerFactory.getLogger(Runnable.class);
 
     public ProgramRunner(MatlabEngine engine, String programPath, String outputPath, String programName) {
         this.engine = engine;
@@ -51,14 +51,17 @@ public class MatlabEngineManager {
     private static HashMap<String, MatlabEngine> engineMap = new HashMap<String, MatlabEngine>();
     private static HashMap<String, Thread> threadMap = new HashMap<String, Thread>();
 
-    private static Logger logger = LoggerFactory.getLogger(MatlabEngineManager.class);
-
+    private static final Logger logger = LoggerFactory.getLogger(MatlabEngineManager.class);
+    public static HashMap getThreadMap(){
+        return threadMap;
+    }
     private static MatlabEngine getEngine(String programName) {
         MatlabEngine engine = null;
         if (engineMap.containsKey(programName)) {
             engine = engineMap.get(programName);
         } else {
             try {
+                logger.info("Initiating a new engine...");
                 engine = MatlabEngine.startMatlab();
                 engineMap.put(programName, engine);
             } catch (EngineException | InterruptedException e) {
@@ -84,6 +87,7 @@ public class MatlabEngineManager {
             e.printStackTrace();
         }
         MatlabEngine engine = getEngine(programName);
+        logger.info("Gotten the engine.");
         if (engine == null) {
             logger.error("Engine instance is null!");
             return;
@@ -93,12 +97,11 @@ public class MatlabEngineManager {
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
+        logger.info("Making new runner to run program "+programName);
         var runner = new ProgramRunner(engine, programPath, outputPath, programName);
         Thread thread = new Thread(runner);
         thread.start();
         threadMap.put(programName, thread);
-
-
     }
 
     public static void terminateProgram(String outputPath, String programName) {

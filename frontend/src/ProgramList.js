@@ -1,20 +1,17 @@
 import {Col, Row, Progress, Container} from "reactstrap";
-import ProgramInfo from "./ProgramInfo";
-import ControlButton from "./ControlButton";
-import React from "react";
-
+import React, {useEffect, useState} from "react";
+import {ProgramCard} from "./ProgramCard";
 
 const ProgramList = ({programs}) => {
-    const now = 80;
+    // const now = 80;
+
+
     return (
         <div>
             {
                 programs.map(program => (
                     <Row>
-                        <ProgramInfo title={program.name}/>
-                        <Progress animated value={now}>{now}%</Progress>
-                        <p/>
-                        <ControlButton program={program.name}/>
+                       <ProgramCard program={program}/>
                     </Row>
                 ))
             }
@@ -24,4 +21,5 @@ const ProgramList = ({programs}) => {
     );
 }
 export default ProgramList;
+
 
