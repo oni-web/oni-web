@@ -4,7 +4,7 @@ import {Link} from "react-router-dom";
 import PopupModal from "./PopupModal";
 
 
-const ControlButton = ({programName, setRunning}) => {
+const ControlButton = ({programName, setStatus}) => {
 
     const [disabled, setDisabled] = useState(false);
     const [showModal, setShowModal] = useState(false);
@@ -21,7 +21,7 @@ const ControlButton = ({programName, setRunning}) => {
 
         });
         setDisabled(false);
-        setRunning(true);
+        setStatus("running");
     }
 
     async function handlePause() {
@@ -44,7 +44,7 @@ const ControlButton = ({programName, setRunning}) => {
             },
 
         });
-        setRunning(false);
+        setStatus("stopped");
     }
 
     async function handleCheckResult() {

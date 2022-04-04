@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {
     Card, CardImg, CardText, CardBody,
-    CardTitle, CardSubtitle, Button, Progress, Row
+    CardTitle, CardSubtitle, Button, Progress, Row, Label
 } from 'reactstrap';
 
 import ControlButton from "./ControlButton";
@@ -9,22 +9,17 @@ import ControlButton from "./ControlButton";
 
 export const ProgramCard = ({program}) => {
 
-    const [running, setRunning] = useState(program.status === "running");
+    const [programStatus, setProgramStatus] = useState(program.status);
     return (
         <div>
             <Card>
-                {/*<CardImg top width="100%" src="https://placeholdit.imgix.net/~text?txtsize=33&txt=318%C3%97180&w=318&h=180" alt="Card image cap" />*/}
                 <CardBody>
-                    {/*<CardTitle>{program.name}</CardTitle>*/}
-                    {/*<CardSubtitle>Card subtitle</CardSubtitle>*/}
-
-                    {/*<CardText>Some quick example text to build on the card title and make up the bulk of the card's content.</CardText>*/}
-                    {/*<Button>Button</Button>*/}
+                    <CardTitle> {programStatus} </CardTitle>
                     <Row>
-                        <ProgramInfo title={program.name}/>
-                        <ProgressBar programName={program.name} running={running} setRunning={setRunning}/>
+                        <ProgramInfo title={program.name} status={programStatus} description={program.description}/>
+                        <ProgressBar programName={program.name} status={programStatus} setStatus={setProgramStatus}/>
                         <p/>
-                        <ControlButton programName={program.name} setRunning={setRunning}/>
+                        <ControlButton programName={program.name} setStatus={setProgramStatus}/>
                     </Row>
 
                 </CardBody>
@@ -32,13 +27,14 @@ export const ProgramCard = ({program}) => {
         </div>
     );
 }
-const ProgramInfo = ({title}) => {
+const ProgramInfo = ({title, status, description}) => {
 
     return (
         <div>
+            {/*<h2>{title}: {status}</h2>*/}
             <h2>{title}</h2>
             <p>
-                Program description here.
+                Program description here. {description}
             </p>
 
         </div>
@@ -46,15 +42,14 @@ const ProgramInfo = ({title}) => {
 
 }
 
-const ProgressBar = ({programName, running, setRunning}) => {
+// const ProgressBar = ({programName, running, setRunning, status, setStatus}) => {
+const ProgressBar = ({programName, status, setStatus}) => {
     const [now, setNow] = useState(0);
-
-
 
     useEffect(() => {
         // Check at interval, but only fetch when the program is running.
         const id = setInterval(() => {
-            if (running) {
+            if (status === "running") {
                 console.log(programName + " is running, check progress...")
                 fetch('/program/getProgress/' + programName, {
                     method: 'GET',
@@ -69,20 +64,14 @@ const ProgressBar = ({programName, running, setRunning}) => {
                     .then(data => {
                         let n = data.fraction * 100
                         setNow(parseInt(n));
-                        if (data.status === "running") {
-                            setRunning(true);
-
-
-                        } else {
-                            setRunning(false);
-
-
-                        }
+                        setStatus(data.status);
+                        console.log("executing...");
+                        // TODO If the status is "finished", set now to 100.
                     })
             }
         }, 800);
         return () => clearInterval(id); //clean up the effect.
-    }, [running]);
+    }, [status]);
     return (
         <Progress animated value={now}>{now}%</Progress>
     );

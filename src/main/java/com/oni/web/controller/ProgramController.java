@@ -41,6 +41,7 @@ public class ProgramController {
 
     @GetMapping("/pause/{programName}")
     public void pauseProgram(@PathVariable String programName) {
+        //TODO pause program
         // command process id terminal ctrl+Z
         logger.info("pause matlab program: " + programName);
 
@@ -50,7 +51,7 @@ public class ProgramController {
     @GetMapping("/terminate/{programName}")
     public ResponseEntity<Object> terminateProgram(@PathVariable String programName) {
         logger.info("terminate matlab program: " + programName);
-        MatlabEngineManager.terminateProgram(outputPath, programName);
+        MatlabEngineManager.terminateProgram(outputPath, progressPath, programName);
         return ResponseEntity.ok().build();
     }
 
@@ -80,7 +81,7 @@ public class ProgramController {
 
     @GetMapping("/getProgress/{programName}")
     public ResponseEntity<Object> getProgress(@PathVariable String programName) {
-        class Progress{
+        class Progress {
             final String status;
             final Double fraction;
 
@@ -99,18 +100,18 @@ public class ProgramController {
         }
         Path path = Path.of(progressPath + programName);
         logger.info("get progress of matlab program: " + programName);
-        if (!Files.exists(path)) {
-            logger.error("progress file doesn't exist!");
-            return ResponseEntity.ok(new Progress("stopped",0.0));
-        }
-        Double fraction = null;
+//        if (!Files.exists(path)) {
+//            logger.error("progress file doesn't exist!");
+//            return ResponseEntity.ok(new Progress("stopped", 0.0));
+//        }
+        String status = MatlabEngineManager.getStatus(programName);
+        double fraction = 0.0;
         try {
-            fraction = Double.valueOf(Files.readString(path, StandardCharsets.UTF_8));
+            fraction = Double.parseDouble(Files.readString(path, StandardCharsets.UTF_8));
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if (fraction==1)  return ResponseEntity.ok(new Progress("stopped",fraction));
-        return ResponseEntity.ok(new Progress("running",fraction));
+        return ResponseEntity.ok(new Progress(status, fraction));
     }
 
     /**
@@ -127,12 +128,10 @@ public class ProgramController {
                         String name = fileName.substring(0, fileName.lastIndexOf("."));
                         Program program = new Program();
                         program.setName(name);
-                        var threadMap = MatlabEngineManager.getThreadMap();
-                        if (threadMap.containsKey(name)) {
-                            program.setStatus("running");
-                        } else {
-                            program.setStatus("stopped");
-                        }
+                        // TODO Read description from matlab file...
+                        program.setDescription("Read description from matlab file... ");
+//                        var threadMap = MatlabEngineManager.getThreadMap();
+                        program.setStatus(MatlabEngineManager.getStatus(name));
                         programList.add(program);
                     });
         } catch (IOException e) {
