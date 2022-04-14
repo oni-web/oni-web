@@ -29,12 +29,14 @@ public class ProgramController {
     String progressPath;
     @Value("${matlab_program_root_path}${matlab_program_output_rel_dir}")
     String outputPath;
+    @Value("${matlab_program_root_path}${matlab_program_controlPath_rel_dir}")
+    String controlFlagPath;
 
     Logger logger = LoggerFactory.getLogger(ProgramController.class);
 
     @GetMapping("/start/{programName}")
     public ResponseEntity<String> startProgram(@PathVariable String programName) {
-        MatlabEngineManager.runProgram(programPath, outputPath, programName);
+        MatlabEngineManager.runProgram(programPath, outputPath, controlFlagPath,programName);
         return ResponseEntity.ok("Started successfully.");
 //        return clientRepository.findById(id).orElseThrow(RuntimeException::new);
     }
@@ -44,14 +46,14 @@ public class ProgramController {
         //TODO pause program
         // command process id terminal ctrl+Z
         logger.info("pause matlab program: " + programName);
-
+        MatlabEngineManager.pauseProgram(programPath, outputPath, controlFlagPath,programName);
 //        return clientRepository.findById(id).orElseThrow(RuntimeException::new);
     }
 
     @GetMapping("/terminate/{programName}")
     public ResponseEntity<Object> terminateProgram(@PathVariable String programName) {
         logger.info("terminate matlab program: " + programName);
-        MatlabEngineManager.terminateProgram(outputPath, progressPath, programName);
+        MatlabEngineManager.terminateProgram(outputPath, progressPath, controlFlagPath, programName);
         return ResponseEntity.ok().build();
     }
 

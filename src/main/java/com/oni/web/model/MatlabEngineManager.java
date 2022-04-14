@@ -5,6 +5,7 @@ import com.mathworks.engine.MatlabEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -80,15 +81,30 @@ public class MatlabEngineManager {
         }
         return engine;
     }
+
     public static String getStatus(String programName) {
-       return statusMap.getOrDefault(programName, STATUS_STOPPED);
+        return statusMap.getOrDefault(programName, STATUS_STOPPED);
     }
-    public static void runProgram(String programPath, String outputPath, String programName) {
+
+    public static void runProgram(String programPath, String outputPath, String controlFlagPath,String programName) {
         if (threadMap.containsKey(programName) && !threadMap.get(programName).isAlive()) {
             threadMap.remove(programName);
         }
         if (threadMap.containsKey(programName) && threadMap.get(programName).isAlive()) {
             return;
+        }
+        var flagPath = Path.of(controlFlagPath + programName);
+        try {
+            if(!Files.exists(flagPath)) Files.createFile(flagPath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            FileWriter myWriter = new FileWriter(controlFlagPath + programName);
+            myWriter.write(0);
+            myWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         // process starts
         var path = Path.of(outputPath + programName);
@@ -118,8 +134,30 @@ public class MatlabEngineManager {
 
     }
 
-    public static void terminateProgram(String outputPath, String progressPath, String programName) {
-        threadMap.get(programName).stop();
+    public static void pauseProgram(String outputPath, String progressPath, String controlFlagPath, String programName){
+        if (threadMap.containsKey(programName)){
+            threadMap.get(programName);
+        }
+    }
+
+
+    public static void terminateProgram(String outputPath, String progressPath, String controlFlagPath, String programName) {
+        var flagPath = Path.of(controlFlagPath + programName);
+        try {
+            if(!Files.exists(flagPath)) Files.createFile(flagPath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            FileWriter myWriter = new FileWriter(controlFlagPath + programName);
+            myWriter.write(1);
+            myWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+//        threadMap.get(programName).stop();
         threadMap.remove(programName);
         statusMap.put(programName, STATUS_STOPPED);
 
