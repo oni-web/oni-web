@@ -116,6 +116,16 @@ public class ProgramController {
         return ResponseEntity.ok(new Progress(status, fraction));
     }
 
+    @GetMapping("/getDetails/{programName}")
+    public ResponseEntity<Object> getDetails(@PathVariable String programName) {
+        Program program = new Program();
+        String codes = MatlabEngineManager.getCodes(programPath, programName);
+
+        program.setName(programName);
+        program.setCodes(codes);
+        return ResponseEntity.ok(program);
+    }
+
     /**
      * This function returns all the filenames under programPath.
      * It doesn't check whether there are invalid files under the directory. Be aware of that!

@@ -14,6 +14,16 @@ public class Program {
 
     private String description;
 
+    private String codes;
+
+    public String getCodes() {
+        return codes;
+    }
+
+    public void setCodes(String codes) {
+        this.codes = codes;
+    }
+
     public String getDescription() {
         return description;
     }

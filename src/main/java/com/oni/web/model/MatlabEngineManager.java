@@ -22,6 +22,8 @@ class ProgramRunner implements Runnable {
     private final Logger logger = LoggerFactory.getLogger(Runnable.class);
 
     public ProgramRunner(MatlabEngine engine, String programPath, String outputPath, String programName, HashMap<String, String> statusMap) {
+
+
         this.engine = engine;
         this.programPath = programPath;
         this.programName = programName;
@@ -33,11 +35,13 @@ class ProgramRunner implements Runnable {
     @Override
     public void run() {
         try {
-
+//            MatlabEngine engine = MatlabEngine.startMatlab();
+            // act like environment variable (path)
+//            engine.feval("addpath", programPath);
             var path = Path.of(outputPath + programName);
             Files.createFile(path);
             // Output file will be written by matlab program.
-            double res = engine.feval(programName);
+            engine.feval(programName);
             statusMap.put(programName, MatlabEngineManager.STATUS_FINISHED);
         } catch (InterruptedException | ExecutionException | IOException e) {
             e.printStackTrace();
@@ -66,7 +70,7 @@ public class MatlabEngineManager {
         return statusMap;
     }
 
-    private static MatlabEngine getEngine(String programName) {
+    public static MatlabEngine getEngine(String programName) {
         MatlabEngine engine = null;
         if (engineMap.containsKey(programName)) {
             engine = engineMap.get(programName);
@@ -86,7 +90,7 @@ public class MatlabEngineManager {
         return statusMap.getOrDefault(programName, STATUS_STOPPED);
     }
 
-    public static void runProgram(String programPath, String outputPath, String controlFlagPath,String programName) {
+    public static void runProgram(String programPath, String outputPath, String controlFlagPath, String programName) {
         if (threadMap.containsKey(programName) && !threadMap.get(programName).isAlive()) {
             threadMap.remove(programName);
         }
@@ -95,7 +99,7 @@ public class MatlabEngineManager {
         }
         var flagPath = Path.of(controlFlagPath + programName);
         try {
-            if(!Files.exists(flagPath)) Files.createFile(flagPath);
+            if (!Files.exists(flagPath)) Files.createFile(flagPath);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -121,6 +125,7 @@ public class MatlabEngineManager {
             return;
         }
         try {
+            // act like environment variable (path)
             engine.feval("addpath", programPath);
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
@@ -134,8 +139,8 @@ public class MatlabEngineManager {
 
     }
 
-    public static void pauseProgram(String outputPath, String progressPath, String controlFlagPath, String programName){
-        if (threadMap.containsKey(programName)){
+    public static void pauseProgram(String outputPath, String progressPath, String controlFlagPath, String programName) {
+        if (threadMap.containsKey(programName)) {
             threadMap.get(programName);
         }
     }
@@ -144,7 +149,7 @@ public class MatlabEngineManager {
     public static void terminateProgram(String outputPath, String progressPath, String controlFlagPath, String programName) {
         var flagPath = Path.of(controlFlagPath + programName);
         try {
-            if(!Files.exists(flagPath)) Files.createFile(flagPath);
+            if (!Files.exists(flagPath)) Files.createFile(flagPath);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -155,9 +160,8 @@ public class MatlabEngineManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        //        threadMap.get(programName).stop();
 
-
-//        threadMap.get(programName).stop();
         threadMap.remove(programName);
         statusMap.put(programName, STATUS_STOPPED);
 
@@ -168,7 +172,18 @@ public class MatlabEngineManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
 
+
+    public static String getCodes(String programPath, String programName) {
+        var path = Path.of(programPath + programName + ".m");
+        String codes = "";
+        try {
+            codes = Files.readString(path);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return codes;
     }
 
 }

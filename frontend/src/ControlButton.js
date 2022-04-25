@@ -9,6 +9,7 @@ const ControlButton = ({programName, setStatus}) => {
     const [disabled, setDisabled] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [data, setData] = useState(null);
+    const [size, setSize] = useState("md");
 
     async function handleStart() {
         setDisabled(true);
@@ -56,11 +57,33 @@ const ControlButton = ({programName, setStatus}) => {
             },
 
         }).then(res => {
-            return res.json();
+            return res.text();
         }).then(data => {
-            setShowModal(true);
             setData(data);
+            setSize("md");
+            setShowModal(true);
         });
+    }
+
+    async function handleViewDetails() {
+        await fetch('program/getDetails/' + programName, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+
+        }).then(res => {
+            return res.json();
+        })
+            .then(data => {
+                let codes = data.codes;
+                // console.log(codes);
+                setSize("lg");
+                setData(codes);
+                setShowModal(true);
+            });
+
     }
 
 
@@ -80,11 +103,11 @@ const ControlButton = ({programName, setStatus}) => {
                     </ButtonGroup>
                 </Col>
                 <Col md={"auto"}>
-                    <Button size="sm" className={"text-nowrap"} color={"primary"} tag={Link} to={"/detail"}>View
-                        details</Button>
+                    <Button size="sm" className={"text-nowrap"} color={"primary"}
+                            onClick={() => handleViewDetails()}>View details</Button>
                 </Col>
             </Row>
-            <PopupModal open={showModal} setOpen={setShowModal} body={data}/>
+            <PopupModal open={showModal} setOpen={setShowModal} body={data} size={size}/>
         </Container>
 
     );

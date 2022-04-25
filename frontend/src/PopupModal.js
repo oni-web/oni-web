@@ -2,7 +2,7 @@ import React, {Component, useState} from "react";
 import {Button, Modal, ModalBody, ModalFooter, ModalHeader} from "reactstrap";
 
 // class PopupModal extends Component {
-const PopupModal = ({open, setOpen, body}) => {
+const PopupModal = ({open, setOpen, body, size}) => {
 
     const toggle = () => {
         setOpen(!open);
@@ -11,9 +11,9 @@ const PopupModal = ({open, setOpen, body}) => {
 
     return (
         <div>
-            <Modal isOpen={open} toggle={toggle}>
+            <Modal isOpen={open} toggle={toggle} fade={false} size={size}>
                 <ModalHeader toggle={toggle}>Modal title</ModalHeader>
-                <ModalBody>
+                <ModalBody style={{whiteSpace: "pre-wrap"}}>
                     {body}
                 </ModalBody>
                 <ModalFooter>
