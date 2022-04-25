@@ -36,7 +36,7 @@ public class ProgramController {
 
     @GetMapping("/start/{programName}")
     public ResponseEntity<String> startProgram(@PathVariable String programName) {
-        MatlabEngineManager.runProgram(programPath, outputPath, controlFlagPath,programName);
+        MatlabEngineManager.runProgram(programPath, outputPath, controlFlagPath, programName);
         return ResponseEntity.ok("Started successfully.");
 //        return clientRepository.findById(id).orElseThrow(RuntimeException::new);
     }
@@ -46,7 +46,7 @@ public class ProgramController {
         //TODO pause program
         // command process id terminal ctrl+Z
         logger.info("pause matlab program: " + programName);
-        MatlabEngineManager.pauseProgram(programPath, outputPath, controlFlagPath,programName);
+        MatlabEngineManager.pauseProgram(programPath, outputPath, controlFlagPath, programName);
 //        return clientRepository.findById(id).orElseThrow(RuntimeException::new);
     }
 
@@ -137,14 +137,23 @@ public class ProgramController {
             Files.list(new File(programPath).toPath())
                     .forEach(path -> {
                         String fileName = String.valueOf(path.getFileName());
-                        String name = fileName.substring(0, fileName.lastIndexOf("."));
-                        Program program = new Program();
-                        program.setName(name);
-                        // TODO Read description from matlab file...
-                        program.setDescription("Read description from matlab file... ");
+                        String name = null;
+                        String extension = null;
+                        try {
+                            name = fileName.substring(0, fileName.lastIndexOf("."));
+                            extension = fileName.substring(fileName.lastIndexOf("."));
+                        } catch (StringIndexOutOfBoundsException e) {
+                            logger.warn("File name " + fileName + " is not a matlab program.");
+                        }
+                        if (name != null && extension != null && extension.equals(".m")) {
+                            Program program = new Program();
+                            program.setName(name);
+                            // TODO Read description from matlab file...
+                            program.setDescription("Read description from matlab file... ");
 //                        var threadMap = MatlabEngineManager.getThreadMap();
-                        program.setStatus(MatlabEngineManager.getStatus(name));
-                        programList.add(program);
+                            program.setStatus(MatlabEngineManager.getStatus(name));
+                            programList.add(program);
+                        }
                     });
         } catch (IOException e) {
             e.printStackTrace();
