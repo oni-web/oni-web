@@ -1,13 +1,14 @@
 import React, {Component, useState} from "react";
 import {Button, Modal, ModalBody, ModalFooter, ModalHeader} from "reactstrap";
-
+import {TransformWrapper, TransformComponent} from "react-zoom-pan-pinch";
 // class PopupModal extends Component {
-const PopupModal = ({open, setOpen, body, size}) => {
+const PopupModal = ({open, setOpen, body, images, size}) => {
 
     const toggle = () => {
         setOpen(!open);
     }
 
+    console.log("body: " + body);
 
     return (
         <div>
@@ -15,6 +16,21 @@ const PopupModal = ({open, setOpen, body, size}) => {
                 <ModalHeader toggle={toggle}>Modal title</ModalHeader>
                 <ModalBody style={{whiteSpace: "pre-wrap"}}>
                     {body}
+                    {
+                        images.map((imageSrc) => {
+                            return (
+                                <TransformWrapper wheel={{step:0.1}} maxScale={4}>
+                                    <TransformComponent>
+                                        <img src={imageSrc} className="img-thumbnail" width={800}/>
+                                        {/*<img src={imageSrc} width={800}/>*/}
+                                    </TransformComponent>
+                                </TransformWrapper>);
+
+
+                        })
+
+                    }
+
                 </ModalBody>
                 <ModalFooter>
                     <Button color="primary" onClick={toggle}>Close</Button>{' '}

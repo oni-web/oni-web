@@ -10,6 +10,7 @@ const ControlButton = ({programName, setStatus}) => {
     const [showModal, setShowModal] = useState(false);
     const [data, setData] = useState(null);
     const [size, setSize] = useState("md");
+    const [images, setImages] = useState([]);
 
     async function handleStart() {
         setDisabled(true);
@@ -57,10 +58,20 @@ const ControlButton = ({programName, setStatus}) => {
             },
 
         }).then(res => {
-            return res.text();
+            return res.json();
         }).then(data => {
-            setData(data);
-            setSize("md");
+            let text = data.textResult;
+            let imageStrings = data.imgResult;
+            let images = Array();
+            imageStrings.forEach(
+                imgString => {
+                    let src = "data:image/png;base64," + imgString;
+                    images.push(src);
+
+                });
+            setData(text);
+            setImages(images);
+            setSize("lg");
             setShowModal(true);
         });
     }
@@ -81,6 +92,7 @@ const ControlButton = ({programName, setStatus}) => {
                 // console.log(codes);
                 setSize("lg");
                 setData(codes);
+                setImages([]);
                 setShowModal(true);
             });
 
@@ -107,7 +119,7 @@ const ControlButton = ({programName, setStatus}) => {
                             onClick={() => handleViewDetails()}>View details</Button>
                 </Col>
             </Row>
-            <PopupModal open={showModal} setOpen={setShowModal} body={data} size={size}/>
+            <PopupModal open={showModal} setOpen={setShowModal} body={data} images={images} size={size}/>
         </Container>
 
     );

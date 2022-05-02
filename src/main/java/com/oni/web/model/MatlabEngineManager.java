@@ -39,12 +39,18 @@ class ProgramRunner implements Runnable {
             // act like environment variable (path)
 //            engine.feval("addpath", programPath);
             var path = Path.of(outputPath + programName);
-            Files.createFile(path);
+            try {
+                if (!Files.exists(path)) Files.createFile(path);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             // Output file will be written by matlab program.
             engine.feval(programName);
-            statusMap.put(programName, MatlabEngineManager.STATUS_FINISHED);
-        } catch (InterruptedException | ExecutionException | IOException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
+        }
+        finally {
+            statusMap.put(programName, MatlabEngineManager.STATUS_FINISHED);
         }
     }
 

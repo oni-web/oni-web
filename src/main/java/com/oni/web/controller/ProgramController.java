@@ -2,6 +2,8 @@ package com.oni.web.controller;
 
 import com.oni.web.model.MatlabEngineManager;
 import com.oni.web.model.Program;
+import com.oni.web.model.ProgramResult;
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -66,18 +68,38 @@ public class ProgramController {
     @GetMapping("/checkResult/{programName}")
     public ResponseEntity<Object> checkProgram(@PathVariable String programName) {
 
-        Path path = Path.of(outputPath + programName);
+        Path outputFilePath = Path.of(outputPath + programName);
         logger.info("checkResult matlab program: " + programName);
-        if (!Files.exists(path)) {
+        Base64 base64 = new Base64();
+
+        if (!Files.exists(outputFilePath)) {
             logger.warn("output file doesn't exist. Check later.");
             return ResponseEntity.ok("Still running, check later");
         }
-        String result = null;
+        String text = null;
         try {
-            result = Files.readString(path, StandardCharsets.UTF_8);
+            text = Files.readString(outputFilePath, StandardCharsets.UTF_8);
         } catch (IOException e) {
             e.printStackTrace();
         }
+        ArrayList<String> imgs = new ArrayList();
+        try {
+            Files.list(new File(outputPath+programName+"_img").toPath())
+                    .forEach(path -> {
+                        try {
+                            String encodedString = new String(base64.encode(Files.readAllBytes(path)));
+                            imgs.add(encodedString);
+                        } catch (IOException e) {
+                            logger.error("Something wrong with img converting to base64.");
+                            e.printStackTrace();
+                        }
+                    });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        ProgramResult result = new ProgramResult();
+        result.setTextResult(text);
+        result.setImgResult(imgs);
         return ResponseEntity.ok(result);
     }
 
