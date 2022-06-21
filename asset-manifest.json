@@ -1,16 +1,16 @@
 {
   "files": {
-    "main.css": "/oni-w%22predeploy%22:%20%22npm%20run%20build%22,%22deploy%22:%20%22gh-pages%20-d%20build%22eb/static/css/main.04179b6f.css",
-    "main.js": "/oni-w%22predeploy%22:%20%22npm%20run%20build%22,%22deploy%22:%20%22gh-pages%20-d%20build%22eb/static/js/main.73e5d513.js",
-    "static/js/787.cda612ba.chunk.js": "/oni-w%22predeploy%22:%20%22npm%20run%20build%22,%22deploy%22:%20%22gh-pages%20-d%20build%22eb/static/js/787.cda612ba.chunk.js",
-    "static/media/logo.svg": "/oni-w%22predeploy%22:%20%22npm%20run%20build%22,%22deploy%22:%20%22gh-pages%20-d%20build%22eb/static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg",
-    "index.html": "/oni-w%22predeploy%22:%20%22npm%20run%20build%22,%22deploy%22:%20%22gh-pages%20-d%20build%22eb/index.html",
-    "main.04179b6f.css.map": "/oni-w%22predeploy%22:%20%22npm%20run%20build%22,%22deploy%22:%20%22gh-pages%20-d%20build%22eb/static/css/main.04179b6f.css.map",
-    "main.73e5d513.js.map": "/oni-w%22predeploy%22:%20%22npm%20run%20build%22,%22deploy%22:%20%22gh-pages%20-d%20build%22eb/static/js/main.73e5d513.js.map",
-    "787.cda612ba.chunk.js.map": "/oni-w%22predeploy%22:%20%22npm%20run%20build%22,%22deploy%22:%20%22gh-pages%20-d%20build%22eb/static/js/787.cda612ba.chunk.js.map"
+    "main.css": "/oni-web/static/css/main.04179b6f.css",
+    "main.js": "/oni-web/static/js/main.85ada07c.js",
+    "static/js/787.cda612ba.chunk.js": "/oni-web/static/js/787.cda612ba.chunk.js",
+    "static/media/logo.svg": "/oni-web/static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg",
+    "index.html": "/oni-web/index.html",
+    "main.04179b6f.css.map": "/oni-web/static/css/main.04179b6f.css.map",
+    "main.85ada07c.js.map": "/oni-web/static/js/main.85ada07c.js.map",
+    "787.cda612ba.chunk.js.map": "/oni-web/static/js/787.cda612ba.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.04179b6f.css",
-    "static/js/main.73e5d513.js"
+    "static/js/main.85ada07c.js"
   ]
 }
